@@ -10,13 +10,12 @@ export interface PrioritizedQuote {
   daysUntilFollowUp: number | null;
 }
 
-function daysBetween(from: string, to: Date = new Date()): number {
+function daysBetween(from: string, to: Date): number {
   const a = new Date(from);
   return Math.floor((to.getTime() - a.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-export function prioritizeQuotes(quotes: Quote[]): PrioritizedQuote[] {
-  const today = new Date();
+export function prioritizeQuotes(quotes: Quote[], today: Date = new Date()): PrioritizedQuote[] {
   const active = quotes.filter((q) => q.status !== "won" && q.status !== "lost");
 
   const prioritized: PrioritizedQuote[] = active.map((quote) => {
