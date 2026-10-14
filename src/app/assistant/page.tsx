@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuotes } from "@/lib/quote-context";
 import { prioritizeQuotes, PrioritizedQuote } from "@/lib/followup-engine";
 import { STATUS_LABELS } from "@/lib/types";
@@ -18,13 +18,18 @@ interface AssistantResult {
 
 export default function AssistantPage() {
   const { quotes, loading, updateQuote } = useQuotes();
-  const prioritized = prioritizeQuotes(quotes).filter((p) => p.priority !== "low");
+  const [today, setToday] = useState<Date | null>(null);
+  const prioritized = today ? prioritizeQuotes(quotes, today).filter((p) => p.priority !== "low") : [];
   const [selected, setSelected] = useState<PrioritizedQuote | null>(null);
   const [result, setResult] = useState<AssistantResult | null>(null);
   const [draft, setDraft] = useState("");
   const [subject, setSubject] = useState("");
   const [generating, setGenerating] = useState(false);
   const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    setToday(new Date());
+  }, []);
 
   const generate = async (item: PrioritizedQuote) => {
     setSelected(item);
